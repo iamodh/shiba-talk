@@ -1,3 +1,3 @@
 export default () => {
-  return <h1>Create account.</h1>;
+  return <h1>Login.</h1>;
 };
