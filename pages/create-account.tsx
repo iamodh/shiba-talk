@@ -1,3 +1,5 @@
+import { useRouter } from "next/router";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 interface IForm {
@@ -6,13 +8,34 @@ interface IForm {
 }
 
 export default () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<IForm>();
-  const onValid = (data: IForm) => {
-    console.log(data);
+  const [loading, setLoading] = useState(false);
+  const onValid = async (data: IForm) => {
+    if (!loading) {
+      setLoading(true);
+      const request = await fetch("/api/user/create-account", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      if (request.status === 200) {
+        alert("Account already exists. Please log in.");
+      }
+      if (request.status === 201) {
+        alert("Account created. Please log in.");
+      }
+      if (request.status !== 405) {
+        router.push("/login");
+      }
+      setLoading(false);
+    }
   };
   return (
     <div className="flex justify-center items-center max-w-lg m-auto h-screen">
